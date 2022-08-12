@@ -399,6 +399,7 @@ class ServerUtilTest extends BaseTest
             ], $response->json(true));
 
             unset($http2);
+            sleep(1);
 
             $http1 = new HttpRequest();
             $response = $http1->header('Connection', 'keep-alive')->get($this->host . 'serverUtil/getConnectionCount');
