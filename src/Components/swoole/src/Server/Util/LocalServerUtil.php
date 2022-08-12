@@ -643,45 +643,45 @@ class LocalServerUtil implements ISwooleServerUtil
      */
     public function getConnectionCount(?string $serverName = null): int
     {
-        $server = $this->getServer($serverName);
-        $swooleServer = $server->getSwooleServer();
-        if (\SWOOLE_BASE === $swooleServer->mode)
-        {
-            $result = 0;
-            $id = uniqid('', true);
-            try
-            {
-                $channel = ChannelContainer::getChannel($id);
-                $count = $this->sendMessage('getConnectionCountRequest', [
-                    'messageId'    => $id,
-                    'serverName'   => $server->getName(),
-                    'needResponse' => true,
-                ]);
-                if (ProcessType::PROCESS !== App::get(ProcessAppContexts::PROCESS_TYPE))
-                {
-                    for ($i = $count; $i > 0; --$i)
-                    {
-                        $popResult = $channel->pop($this->waitResponseTimeout);
-                        var_dump(__METHOD__, $popResult);
-                        if (false === $popResult)
-                        {
-                            break;
-                        }
-                        $result += ($popResult['result'] ?? 0);
-                    }
-                }
+        // $server = $this->getServer($serverName);
+        // $swooleServer = $server->getSwooleServer();
+        // if (\SWOOLE_BASE === $swooleServer->mode)
+        // {
+        //     $result = 0;
+        //     $id = uniqid('', true);
+        //     try
+        //     {
+        //         $channel = ChannelContainer::getChannel($id);
+        //         $count = $this->sendMessage('getConnectionCountRequest', [
+        //             'messageId'    => $id,
+        //             'serverName'   => $server->getName(),
+        //             'needResponse' => true,
+        //         ]);
+        //         if (ProcessType::PROCESS !== App::get(ProcessAppContexts::PROCESS_TYPE))
+        //         {
+        //             for ($i = $count; $i > 0; --$i)
+        //             {
+        //                 $popResult = $channel->pop($this->waitResponseTimeout);
+        //                 var_dump(__METHOD__, $popResult);
+        //                 if (false === $popResult)
+        //                 {
+        //                     break;
+        //                 }
+        //                 $result += ($popResult['result'] ?? 0);
+        //             }
+        //         }
 
-                return $result;
-            }
-            finally
-            {
-                ChannelContainer::removeChannel($id);
-            }
-        }
-        else
-        {
-            return $server->getSwoolePort()->connections->count();
-        }
+        //         return $result;
+        //     }
+        //     finally
+        //     {
+        //         ChannelContainer::removeChannel($id);
+        //     }
+        // }
+        // else
+        // {
+        return $server->getSwoolePort()->connections->count();
+        // }
     }
 
     /**
