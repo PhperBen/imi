@@ -662,6 +662,7 @@ class LocalServerUtil implements ISwooleServerUtil
                     for ($i = $count; $i > 0; --$i)
                     {
                         $popResult = $channel->pop($this->waitResponseTimeout);
+                        var_dump(__METHOD__, $popResult);
                         if (false === $popResult)
                         {
                             break;
