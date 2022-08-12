@@ -669,17 +669,17 @@ class LocalServerUtil implements ISwooleServerUtil
                         $result += ($popResult['result'] ?? 0);
                     }
                 }
+
+                return $result;
             }
             finally
             {
                 ChannelContainer::removeChannel($id);
             }
-
-            return $result;
         }
         else
         {
-            return iterator_count($this->getServer($serverName)->getSwoolePort()->connections);
+            return iterator_count($server->getSwoolePort()->connections);
         }
     }
 

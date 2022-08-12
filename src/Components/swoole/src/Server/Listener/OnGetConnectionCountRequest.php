@@ -28,12 +28,13 @@ class OnGetConnectionCountRequest implements IEventListener
         $workerId = $eData['workerId'] ?? -1;
         $data = $eData['data'];
         $serverName = $data['serverName'];
-        RequestContext::set('server', ServerManager::getServer($serverName));
+        RequestContext::set('server', $server = ServerManager::getServer($serverName, ISwooleServer::class));
+        /** @var ISwooleServer $server */
         if ($data['needResponse'] ?? true)
         {
             Server::sendMessage('getConnectionCountResponse', [
                 'messageId'  => $data['messageId'],
-                'result'     => iterator_count(Server::getServer($serverName, ISwooleServer::class)->getSwoolePort()->connections),
+                'result'     => iterator_count($server->getSwoolePort()->connections),
                 'serverName' => $serverName,
             ], $workerId, $serverName);
         }
