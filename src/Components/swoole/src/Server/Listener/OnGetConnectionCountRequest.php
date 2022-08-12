@@ -34,7 +34,7 @@ class OnGetConnectionCountRequest implements IEventListener
         {
             Server::sendMessage('getConnectionCountResponse', [
                 'messageId'  => $data['messageId'],
-                'result'     => iterator_count($server->getSwoolePort()->connections),
+                'result'     => $server->getSwoolePort()->connections->count(),
                 'serverName' => $serverName,
             ], $workerId, $serverName);
         }
