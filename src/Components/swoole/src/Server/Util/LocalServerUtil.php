@@ -680,7 +680,7 @@ class LocalServerUtil implements ISwooleServerUtil
         // }
         // else
         // {
-        return $server->getSwoolePort()->connections->count();
+        return $this->getServer($serverName)->getSwoolePort()->connections->count();
         // }
     }
 
