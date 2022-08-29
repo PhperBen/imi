@@ -6,6 +6,7 @@ namespace Imi\Swoole\Pool;
 
 use Imi\App;
 use Imi\Event\Event;
+use Imi\Log\Log;
 use Imi\Pool\BasePool;
 use Imi\Pool\Interfaces\IPoolResource;
 use Imi\Swoole\Util\Coroutine;
@@ -124,19 +125,31 @@ abstract class BaseAsyncPool extends BasePool
         $resource = $poolItem->getResource();
         try
         {
-            if (!$resource->isOpened() || ($config->isCheckStateWhenGetResource() && !$resource->checkState()))
-            {
-                $resource->close();
-                if (!$resource->open())
-                {
-                    throw new \RuntimeException(sprintf('AsyncPool [%s] getResource failed', $this->getName()));
-                }
-            }
+            $reopen = !$resource->isOpened() || ($config->isCheckStateWhenGetResource() && !$resource->checkState());
         }
         catch (\Throwable $th)
         {
-            $this->removeResource($resource);
-            throw $th;
+            $reopen = true;
+            Log::error($th);
+        }
+        finally
+        {
+            if ($reopen)
+            {
+                try
+                {
+                    $resource->close();
+                    if (!$resource->open())
+                    {
+                        throw new \RuntimeException(sprintf('AsyncPool [%s] getResource failed', $this->getName()));
+                    }
+                }
+                catch (\Throwable $th)
+                {
+                    $this->removeResource($resource);
+                    throw $th;
+                }
+            }
         }
 
         return $resource;
@@ -186,19 +199,31 @@ abstract class BaseAsyncPool extends BasePool
         $resource = $poolItem->getResource();
         try
         {
-            if (!$resource->isOpened() || ($this->config->isCheckStateWhenGetResource() && !$resource->checkState()))
-            {
-                $resource->close();
-                if (!$resource->open())
-                {
-                    throw new \RuntimeException(sprintf('AsyncPool [%s] tryGetResource failed', $this->getName()));
-                }
-            }
+            $reopen = !$resource->isOpened() || ($this->config->isCheckStateWhenGetResource() && !$resource->checkState());
         }
         catch (\Throwable $th)
         {
-            $this->removeResource($resource);
-            throw $th;
+            $reopen = true;
+            Log::error($th);
+        }
+        finally
+        {
+            if ($reopen)
+            {
+                try
+                {
+                    $resource->close();
+                    if (!$resource->open())
+                    {
+                        throw new \RuntimeException(sprintf('AsyncPool [%s] getResource failed', $this->getName()));
+                    }
+                }
+                catch (\Throwable $th)
+                {
+                    $this->removeResource($resource);
+                    throw $th;
+                }
+            }
         }
 
         return $resource;
